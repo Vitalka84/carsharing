@@ -11,11 +11,12 @@ public class Main {
                 dbName = args[i + 1];
             }
         }
-        String dbPath = "/Users/vetal/Developing/study/java_rush/Car Sharing/Car Sharing/task/db/" + dbName;
+//        String dbPath = "/Users/vetal/Developing/study/java_rush/Car Sharing/Car Sharing/task/db/" + dbName;
+        String dbPath = "/Users/vetal/Developing/study/java_rush/Car Sharing/Car Sharing/task/src/carsharing/db/" + dbName;
 //        String dbPath = "./src/carsharing/db/" + dbName;
-        Scanner scanner = new Scanner(System.in);
+
         DbH2 dbH2 = new DbH2(dbPath);
         Menus menus = new Menus(dbH2);
-
+        menus.startMenu();
     }
 }

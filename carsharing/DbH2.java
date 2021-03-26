@@ -19,6 +19,8 @@ public class DbH2 {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+        connect();
+        disconnect();
     }
 
     private void connect() {
@@ -73,7 +75,18 @@ public class DbH2 {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+        disconnect();
         return companies;
+    }
+
+    public void addCompany(String companyName) throws SQLException {
+        String sql = "INSERT INTO COMPANY(NAME) VALUES(?)";
+        connect();
+        PreparedStatement addCompany = conn.prepareStatement(sql);
+        addCompany.setString(1, companyName);
+        addCompany.executeUpdate();
+        System.out.println("The company was created!");
+        disconnect();
     }
 
     void disconnect() {
