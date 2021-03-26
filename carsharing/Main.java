@@ -1,5 +1,7 @@
 package carsharing;
 
+import java.util.Scanner;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -9,13 +11,11 @@ public class Main {
                 dbName = args[i + 1];
             }
         }
-        String dbPath = "/Users/vetal/Developing/study/java_rush/Car Sharing/Car Sharing/task/carsharing/db/" + dbName;
-
+        String dbPath = "/Users/vetal/Developing/study/java_rush/Car Sharing/Car Sharing/task/db/" + dbName;
+//        String dbPath = "./src/carsharing/db/" + dbName;
+        Scanner scanner = new Scanner(System.in);
         DbH2 dbH2 = new DbH2(dbPath);
-        String sql = "CREATE TABLE IF NOT EXISTS COMPANY(" +
-                "ID INTEGER," +
-                "NAME VARCHAR" +
-                ")";
-        dbH2.update(sql);
+        Menus menus = new Menus(dbH2);
+
     }
 }
