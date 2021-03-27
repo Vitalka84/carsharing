@@ -45,8 +45,9 @@ public class Menus {
                 } else {
                     System.out.println("Choose the company:");
                     for (int i = 1; i <= companiesArray.length; i++) {
-                        System.out.println(i + ". " + companiesArray[i].getCompanyName());
+                        System.out.println(i + ". " + companiesArray[i - 1].getCompanyName());
                     }
+                    System.out.print("> ");
                     int companyIndex = Integer.parseInt(scanner.nextLine().replace("\\s", ""));
                     if (companyIndex == 0) {
                         startMenu();
@@ -84,11 +85,12 @@ public class Menus {
                 List<Car> cars = dbH2.getCarsByCompanyId(selectedCompany.getId());
                 Car[] carsArray = cars.stream().toArray(Car[]::new);
                 if (carsArray.length == 0) {
-                    System.out.println("The car list is empty!");
+                    System.out.println("\nThe car list is empty!");
+                    companyCarsMenu(selectedCompany);
                 } else {
                     System.out.println("Car list:");
                     for (int i = 1; i <= carsArray.length; i++) {
-                        System.out.println(i + ". " + carsArray[i].getName());
+                        System.out.println(i + ". " + carsArray[i - 1].getName());
                     }
                     companyCarsMenu(selectedCompany);
                 }

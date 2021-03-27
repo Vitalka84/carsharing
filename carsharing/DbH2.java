@@ -109,7 +109,7 @@ public class DbH2 {
 
     public List<Car> getCarsByCompanyId(int id) {
         List<Car> companyCars = new ArrayList<>();
-        String sql = "SELECT * FROM CAR WHERE ID = ?";
+        String sql = "SELECT * FROM CAR WHERE COMPANY_ID = ?";
         connect();
         try {
             PreparedStatement statement = conn.prepareStatement(sql);
