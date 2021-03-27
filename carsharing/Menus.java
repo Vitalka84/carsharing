@@ -39,13 +39,24 @@ public class Menus {
         switch (input) {
             case "1":
                 List<Company> companies = dbH2.getCompanyList();
-                if (companies.isEmpty()) {
+                Company[] companiesArray = companies.stream().toArray(Company[]::new);
+                if (companiesArray.length == 0) {
                     System.out.println("The company list is empty!");
                 } else {
-                    int i = 1;
-                    for (Company company : companies) {
-                        System.out.println(i + ". " + company.getCompanyName());
-                        i++;
+                    System.out.println("Choose the company:");
+                    for (int i = 1; i <= companiesArray.length; i++) {
+                        System.out.println(i + ". " + companiesArray[i].getCompanyName());
+                    }
+                    int companyIndex = Integer.parseInt(scanner.nextLine().replace("\\s", ""));
+                    if (companyIndex == 0) {
+                        startMenu();
+                        break;
+                    }
+                    if (companyIndex > 0 && companyIndex <= companiesArray.length) {
+                        Company selectedCompany = companiesArray[companyIndex - 1];
+                        System.out.print("'" + selectedCompany.getCompanyName() + "' company");
+                        companyCarsMenu(selectedCompany);
+                        break;
                     }
                 }
                 managerMenu();
@@ -59,6 +70,49 @@ public class Menus {
                 break;
             default:
                 managerMenu();
+        }
+    }
+
+    private void companyCarsMenu(Company selectedCompany) {
+        System.out.print("\n1. Car list\n" +
+                "2. Create a car\n" +
+                "0. Back\n" +
+                "> ");
+        input = scanner.nextLine().replace("\\s", "");
+        switch (input) {
+            case "1":
+                List<Car> cars = dbH2.getCarsByCompanyId(selectedCompany.getId());
+                Car[] carsArray = cars.stream().toArray(Car[]::new);
+                if (carsArray.length == 0) {
+                    System.out.println("The car list is empty!");
+                } else {
+                    System.out.println("Car list:");
+                    for (int i = 1; i <= carsArray.length; i++) {
+                        System.out.println(i + ". " + carsArray[i].getName());
+                    }
+                    companyCarsMenu(selectedCompany);
+                }
+                break;
+            case "2":
+                addCarToCompanyMenu(selectedCompany);
+                companyCarsMenu(selectedCompany);
+                break;
+            case "0":
+                managerMenu();
+                break;
+            default:
+                companyCarsMenu(selectedCompany);
+        }
+    }
+
+    private void addCarToCompanyMenu(Company selectedCompany) {
+        System.out.print("\nEnter the car name:\n" +
+                "> ");
+        String carName = scanner.nextLine();
+        try {
+            dbH2.addCarToCompany(carName, selectedCompany.getId());
+        } catch (SQLException throwables) {
+            companyCarsMenu(selectedCompany);
         }
     }
 

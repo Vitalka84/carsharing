@@ -1,5 +1,7 @@
 package carsharing;
 
+import java.io.DataInput;
+import java.io.DataInputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +35,13 @@ public class DbH2 {
                         "ID INT NOT NULL AUTO_INCREMENT," +
                         "`NAME` VARCHAR(50) NOT NULL," +
                         "PRIMARY KEY (`ID`)," +
-                        "UNIQUE KEY `NAME` (`NAME`) USING BTREE);");
+                        "UNIQUE KEY `NAME` (`NAME`) USING BTREE);" +
+                        "CREATE TABLE IF NOT EXISTS CAR (" +
+                        "ID INT PRIMARY KEY AUTO_INCREMENT," +
+                        "NAME VARCHAR(60) NOT NULL UNIQUE," +
+                        "COMPANY_ID INT NOT NULL," +
+                        "CONSTRAINT fk_company FOREIGN KEY (COMPANY_ID)" +
+                        "REFERENCES COMPANY(ID));");
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -97,5 +105,34 @@ public class DbH2 {
         } finally {
             conn = null;
         }
+    }
+
+    public List<Car> getCarsByCompanyId(int id) {
+        List<Car> companyCars = new ArrayList<>();
+        String sql = "SELECT * FROM CAR WHERE ID = ?";
+        connect();
+        try {
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                companyCars.add(new Car(resultSet.getInt("ID"), resultSet.getString("NAME"), resultSet.getInt("COMPANY_ID")));
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        disconnect();
+        return companyCars;
+    }
+
+    public void addCarToCompany(String carName, int id) throws SQLException {
+        String sql = "INSERT INTO CAR (NAME, COMPANY_ID) VALUES(?, ?)";
+        connect();
+        PreparedStatement addCar = conn.prepareStatement(sql);
+        addCar.setString(1, carName);
+        addCar.setInt(2, id);
+        addCar.executeUpdate();
+        System.out.println("The car was added!");
+        disconnect();
     }
 }
