@@ -112,16 +112,26 @@ public class DbH2 {
         }
     }
 
-    public List<Car> getCarsByCompanyId(int id) {
+    public List<Car> getCarsByCompanyId(int id, boolean onlyAvailableToRent) {
         List<Car> companyCars = new ArrayList<>();
-        sql = "SELECT * FROM CAR WHERE COMPANY_ID = ?";
+        sql = "SELECT CAR.ID AS car_id," +
+                "CAR.NAME AS car_name," +
+                "CAR.COMPANY_ID AS car_company_id" +
+                "CUSTOMER.ID AS customer_id" +
+                "FROM CAR " +
+                "LEFT JOIN CUSTOMER " +
+                "WHERE COMPANY_ID = ?";
         connect();
         try {
             PreparedStatement statement = conn.prepareStatement(sql);
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                companyCars.add(new Car(resultSet.getInt("ID"), resultSet.getString("NAME"), resultSet.getInt("COMPANY_ID")));
+                if (onlyAvailableToRent && resultSet.getInt("customer_id") == 0) {
+                    companyCars.add(new Car(resultSet.getInt("car_id"), resultSet.getString("car_name"), resultSet.getInt("car_company_id")));
+                } else {
+                    companyCars.add(new Car(resultSet.getInt("car_id"), resultSet.getString("car_name"), resultSet.getInt("car_company_id")));
+                }
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -199,6 +209,20 @@ public class DbH2 {
         try {
             PreparedStatement statement = conn.prepareStatement(sql);
             statement.setInt(1, customerId);
+            statement.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        disconnect();
+    }
+
+    public void rentCar(Customer selectedCustomer, Car selectedCar) {
+        sql = "UPDATE CUSTOMER SET RENTED_CAR_ID = ? WHERE ID = ?";
+        connect();
+        try {
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setInt(1, selectedCar.getId());
+            statement.setInt(2, selectedCustomer.getCustomerId());
             statement.executeUpdate();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
