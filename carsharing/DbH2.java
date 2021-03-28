@@ -193,6 +193,7 @@ public class DbH2 {
             PreparedStatement statement = conn.prepareStatement(sql);
             statement.setInt(1, companyId);
             ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
             Company company = new Company(resultSet.getInt("ID"), resultSet.getString("NAME"));
             disconnect();
             return company;

@@ -8,6 +8,7 @@ public class Customer {
     public Customer(int customerId, String name, Car car) {
         this.customerId = customerId;
         this.customerName = name;
+        this.car = car;
     }
 
     public Customer(int customerId, String customerName) {
