@@ -116,10 +116,10 @@ public class DbH2 {
         List<Car> companyCars = new ArrayList<>();
         sql = "SELECT CAR.ID AS car_id," +
                 "CAR.NAME AS car_name," +
-                "CAR.COMPANY_ID AS car_company_id" +
-                "CUSTOMER.ID AS customer_id" +
+                "CAR.COMPANY_ID AS car_company_id," +
+                "CUSTOMER.ID AS customer_id " +
                 "FROM CAR " +
-                "LEFT JOIN CUSTOMER " +
+                "LEFT JOIN CUSTOMER ON CAR.ID = CUSTOMER.RENTED_CAR_ID " +
                 "WHERE COMPANY_ID = ?";
         connect();
         try {
@@ -157,8 +157,8 @@ public class DbH2 {
                 "CUSTOMER.NAME AS customer_name," +
                 "CAR.ID AS car_id," +
                 "CAR.NAME AS car_name," +
-                "CAR.COMPANY_ID AS car_company_id" +
-                "FROM CUSTOMER" +
+                "CAR.COMPANY_ID AS car_company_id " +
+                "FROM CUSTOMER " +
                 "LEFT JOIN CAR ON CAR.ID = CUSTOMER.RENTED_CAR_ID";
         connect();
         try {

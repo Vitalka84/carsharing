@@ -39,11 +39,12 @@ public class Menus {
     }
 
     private void addCustomerMenu() {
-        System.out.println("\nEnter the customer name:\n" +
+        System.out.print("\nEnter the customer name:\n" +
                 "> ");
         input = scanner.nextLine();
         try {
             dbH2.addCustomer(input);
+            startMenu();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             startMenu();
@@ -55,21 +56,22 @@ public class Menus {
         Customer[] customersArray = customers.stream().toArray(Customer[]::new);
         if (customersArray.length == 0) {
             System.out.println("The customer list is empty!");
+            startMenu();
         } else {
-            System.out.print("Choose a customer:");
+            System.out.println("Choose a customer:");
             for (int i = 1; i <= customers.size(); i++) {
                 System.out.println(i + ". " + customersArray[i - 1].getCustomerName());
-                System.out.print("0. Back\n" +
-                        "> ");
-                int customerIndex = Integer.parseInt(scanner.nextLine().replace("\\s", ""));
-                if (customerIndex == 0) {
-                    startMenu();
-                    return;
-                }
-                if (customerIndex > 0 && customerIndex <= customersArray.length) {
-                    Customer selectedCustomer = customersArray[i - 1];
-                    customerMenu(selectedCustomer);
-                }
+            }
+            System.out.print("0. Back\n" +
+                    "> ");
+            int customerIndex = Integer.parseInt(scanner.nextLine().replace("\\s", ""));
+            if (customerIndex == 0) {
+                startMenu();
+                return;
+            }
+            if (customerIndex > 0 && customerIndex <= customersArray.length) {
+                Customer selectedCustomer = customersArray[customerIndex - 1];
+                customerMenu(selectedCustomer);
             }
         }
     }
