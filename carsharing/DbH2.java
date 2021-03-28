@@ -121,17 +121,16 @@ public class DbH2 {
                 "FROM CAR " +
                 "LEFT JOIN CUSTOMER ON CAR.ID = CUSTOMER.RENTED_CAR_ID " +
                 "WHERE COMPANY_ID = ?";
+        if (onlyAvailableToRent) {
+            sql = new StringBuffer(sql).append(" AND CUSTOMER.ID IS NULL").toString();
+        }
         connect();
         try {
             PreparedStatement statement = conn.prepareStatement(sql);
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                if (onlyAvailableToRent && resultSet.getInt("customer_id") == 0) {
-                    companyCars.add(new Car(resultSet.getInt("car_id"), resultSet.getString("car_name"), resultSet.getInt("car_company_id")));
-                } else {
-                    companyCars.add(new Car(resultSet.getInt("car_id"), resultSet.getString("car_name"), resultSet.getInt("car_company_id")));
-                }
+                companyCars.add(new Car(resultSet.getInt("car_id"), resultSet.getString("car_name"), resultSet.getInt("car_company_id")));
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -165,7 +164,10 @@ public class DbH2 {
             PreparedStatement statement = conn.prepareStatement(sql);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Car car = new Car(resultSet.getInt("car_id"), resultSet.getString("car_name"), resultSet.getInt("car_company_id"));
+                Car car = null;
+                if (resultSet.getInt("car_id") > 0) {
+                    car = new Car(resultSet.getInt("car_id"), resultSet.getString("car_name"), resultSet.getInt("car_company_id"));
+                }
                 Customer customer = new Customer(resultSet.getInt("customer_id"), resultSet.getString("customer_name"), car);
                 customers.add(customer);
             }
